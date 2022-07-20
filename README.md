@@ -1,5 +1,7 @@
 # Country Finder
-#### Video Demo:  https://youtu.be/CiHE0b10Jog
+
+## My final project for CS50x
+
 #### Description:
 Country Finder is a web app that searches Netflix catalog accross the globe.
 The search result returns a list of netflix titles with flags of countries where that title is available.
@@ -24,10 +26,9 @@ In the future, there are multitude of features I would like to add, and improve 
 An example of that would be to make each card a link to a pop up page that would show more details about a particular search result. 
 
 Description of each file in the project:
-- **app.py** is the main back end file that contains the routes, manipulates converted JSON, and passes arguments to JINJA.
-- **helper.py** contains the function to make the API call to unogsNG database.
+- **app.py** is the main back end file that contains the routes, manipulates JSON, and passes arguments to JINJA.
 - **templates** folder contains html templates.
 - **static** folder contains css folder which contains styles.css file.
 - **styles.css** is the stylesheet for the web app, mainly for card layout of the results page.
-- **requierments.txt** is flask requierments file.
+- **requirements.txt** is flask requierments file.
 
