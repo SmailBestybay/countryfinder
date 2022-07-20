@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="cards">
+    {# create card per seach result #}
+    {% for row in result_only %}
+        <article class="card">
+            <header>
+                <h2>{{ row["title"] | safe }}</h2>
+            </header>
+            <img src="{{ row.img }}" alt="image of show called {{ row.title }}">
+            <div>
+                <p>
+                    {{ row.synopsis | safe }}
+                </p>
+            </div>
+            <footer>
+                {# create flag icons from clist dict #}
+                {% for value in row["clist"].values() %}
+                    {% if value |int != 0 %}
+                        <i>{{ value }}</i>
+                    {% else %}    
+                        <i class="flag flag-{{ value.lower() }}" title="{{ value }}" ></i> 
+                    {% endif %}
+                {% endfor %}
+            </footer>
+        </article>
+    {% endfor %}
+</div>
+{% endblock %}
