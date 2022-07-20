@@ -1,10 +1,6 @@
-from flask import Flask, redirect, render_template, request, session
-from helper import search_unogs # more exact names to what function does.
+from flask import Flask, render_template, request
 import requests
 import json
-
-# to start virtual enviroment set execution policy and run activate.ps1 file 
-# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 
 app = Flask(__name__)
 
@@ -16,22 +12,57 @@ def index():
 def search():
     
     title = request.form.get("search")
-    result = search_unogs(title)
 
-    # if no results
+    try:
+        response = search_unogs(title)
+        if not response.ok:
+            raise Exception()
+        else:
+            result = response.json()
+    except:
+        return render_template("index.html", title="Something Went Wrong, Try again")
+
     if "results" not in result:
         return render_template("index.html", title="No Results")
 
     result_only = result["results"]
     
-    # concatenate clist with {} then use json.loads() to convert it to dict
-    
-    for i in range(len(result_only)):  # lines 26 to 32 put into helper file, leave lower func to python.  
+    # convert comma separated list of countries into dictionary
+    for i in range(len(result_only)):  
         result_only[i]["clist"] = "{" + result_only[i]["clist"] + "}"
         result_only[i]["clist"] = json.loads(result_only[i]["clist"])
 
-        # for key and value in clist, lower and replace whitespace with dash
+        # for country names consisting from more than one word convert to slug.
         for key, value in result_only[i]["clist"].items():
-            result_only[i]["clist"][key] = value.replace(" ", "-") 
+            if " " in result_only[i]["clist"][key]:
+                result_only[i]["clist"][key] = value.replace(" ", "-") 
 
     return render_template("results.html", result_only=result_only, title="Results")
+
+def search_unogs(title):
+    """Send request to UNOGS API based on title"""
+
+    url = "https://unogsng.p.rapidapi.com/search"
+    f = open("api_key.txt", "r")
+    
+    querystring = {
+        "start_year":"1972",
+        "orderby":"rating",
+        "audiosubtitle_andor":"and",
+        "limit":"100",
+        "subtitle":"english",
+        "query":title,
+        "audio":"english",
+        "country_andorunique":"or",
+        "offset":"0",
+        "end_year":"2021"
+        }
+
+    headers = {
+        'x-rapidapi-host': "unogsng.p.rapidapi.com",
+        'x-rapidapi-key': f.read()
+        }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    return response
